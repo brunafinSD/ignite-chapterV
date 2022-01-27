@@ -1,7 +1,19 @@
-import { memo } from 'react';
+import { memo, useState } from 'react';
+// import { AddProductToWishlist } from './AddProductToWishlist';
+import { AddProductToWishlistProps } from './AddProductToWishlist';
+// dynamic no next é o mesmo que lazy no react
+import dynamic from 'next/dynamic';
 
-interface ProductItemProps{
-  product:{
+// lazy loading - carregar as informações somente no momento que for preciso para não sobrecarregar o bundle sem necessidade.
+// esse componente será importado/criado/carregado somente se o usuário clicar no botão de adicionar aos favoritos
+const AddProductToWishlist = dynamic<AddProductToWishlistProps>(() => {
+  return import('./AddProductToWishlist').then(mod => mod.AddProductToWishlist);
+}, {
+  loading: () => <span>Carregando...</span>
+})
+
+interface ProductItemProps {
+  product: {
     id: number;
     price: number;
     priceFormatted: string;
@@ -10,11 +22,18 @@ interface ProductItemProps{
   onAddToWishList: (id: number) => void;
 }
 
-function ProductItemComponent({product, onAddToWishList}: ProductItemProps){
-  return(
+function ProductItemComponent({ product, onAddToWishList }: ProductItemProps) {
+  const [isAddingToWishlist, setIsAddingToWishlist] = useState<boolean>(false);
+  return (
     <div>
       {product.title} - <strong>{product.priceFormatted}</strong>
-      <button onClick={() => onAddToWishList(product.id)}>Add to wishList</button>
+      <button onClick={() => setIsAddingToWishlist(true)}>Adicionar aos favoritos</button>
+      {isAddingToWishlist && (
+        <AddProductToWishlist
+          onAddToWishlist={() => onAddToWishList(product.id)}
+          onRequestClose={() => setIsAddingToWishlist(false)}
+        />
+      )}
     </div>
   )
 }
