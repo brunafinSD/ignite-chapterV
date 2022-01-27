@@ -2,25 +2,27 @@ import { useMemo } from "react";
 import { ProductItem } from "./ProductItem";
 
 interface SearchResultsProps {
+  totalPrice: number;
   results: Array<{
     id: number;
     price: number;
+    priceFormatted: string;
     title: string;
   }>
   onAddToWishList: (id: number) => void;
 }
 
-export function SearchResults({ results, onAddToWishList }: SearchResultsProps) {
+export function SearchResults({ results, onAddToWishList, totalPrice }: SearchResultsProps) {
 
 // useMemo: evita que alguma coisa que leva muito processamento ex.: cálculos sejam refeitos toda vez que o componente renderizar
 // ele memoiza/memoriza o valor da variável que tem o cálculo e só refaz quando a variável do array de dependências mudar
 // evita que a mesma variável ocupe um novo lugar na memória quando repassamos do pai para o filho
 
-  const totalPrice = useMemo(() => {
-    return results.reduce((total, produto) => {
-      return total + produto.price;
-    }, 0);
-  }, [results]);
+  // const totalPrice = useMemo(() => {
+  //   return results.reduce((total, produto) => {
+  //     return total + produto.price;
+  //   }, 0);
+  // }, [results]);
 
 
   return (
